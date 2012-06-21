@@ -1,0 +1,13 @@
+useDynLib(sme)
+import(stats)
+
+export(AICc, BICn, sme, sme.default, sme.list, sme.data.frame, plot.sme, plotSmeModel,
+plotSmeRaw, plotSmeDiagnostic)
+
+# Used internally
+# export(blockDiagMat, incidenceMatrix, roughnessMatrix, vcov.sme, logLik.sme)
+
+S3method(logLik, sme)
+S3method(vcov, sme)
+S3method(rstandard, sme)
+S3method(BICn, sme)

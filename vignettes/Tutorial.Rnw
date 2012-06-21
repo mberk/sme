@@ -1,0 +1,385 @@
+%%\VignetteIndexEntry{Tutorial}
+%%\VignetteDepends{sme}
+
+\documentclass[12pt]{article}
+\usepackage{Sweave,amsmath,amsfonts,bm,natbib,url}
+\bibliographystyle{plainnat}
+\title{Smoothing-splines Mixed-effects Models in R using the \texttt{sme} Package: a Tutorial}
+\author{Maurice Berk\\
+  Imperial College London\\
+  maurice.berk01@imperial.ac.uk}
+\begin{document}
+\SweaveOpts{engine=R,eps=FALSE,pdf=TRUE,strip.white=true,keep.source=TRUE}
+\SweaveOpts{include=FALSE}
+
+\maketitle
+\begin{abstract}
+  In this vignette, the user is guided through some basic analyses using the \texttt{sme} R package
+  for fitting and visualising smoothing-splines mixed-effects (SME) models. SME models are an
+  extension of the standard linear mixed-effects model that can account for a wide range of
+  non-linear behaviours. They are robust to small sample sizes, noisy observations and missing data
+  and hence a common application area is genomics time series data analysis, from which the example
+  data sets distributed with the package and described in this tutorial originate.
+\end{abstract}
+
+<<preliminaries,echo=FALSE,print=FALSE>>=
+options(width=60)
+@
+
+\section{Introducing the data}
+
+The \texttt{sme} package contains two data sets. The first of these is a small subset of data
+from an experiment conducted on blood samples from six healthy human volunteers to investigate the
+genetic response to \textit{M.Tuberculosis} infection. This will be referred to as the `MTB' data
+set and is a \texttt{data.frame} with variables:
+<<loadMTB>>=
+library(sme)
+data(MTB)
+names(MTB)
+@
+\texttt{y} contains the observed gene expression values, \texttt{tme} contains the
+corresponding time points (in hours) at which the measurements in \texttt{y} were taken,
+\texttt{ind} is a factor identifying which subject is associated with the measurements in
+\texttt{y}, and \texttt{variable} is a factor indicating which gene transcript the measurements are
+associated with.
+
+The typical approach with replicated genomics data sets such as these, which contain repeated
+measurements on more than one biological unit, is to model each transcript independently using a
+functional mixed-effects model \citep{Storey2005,Liu2009,Berk2010}. To begin, considering only the
+first transcript then, with identifier \texttt{6031}, the raw data can be visualised as a trellis
+plot using the \texttt{lattice} package:
+<<MTBrawPlot,fig=TRUE>>=
+library(lattice)
+print(xyplot(y ~ tme | ind,data=MTB[MTB$variable==6031,],
+  xlab="Hour",ylab="Gene Expression"))
+@
+\begin{figure}[tbh]
+  \centering
+  \includegraphics{Tutorial-MTBrawPlot}
+  \caption{Raw data for gene transcript \texttt{6031} from the MTB data set. Note the small number
+  of subjects and time points, the highly non-linear responses and the missing data (the final
+  observation for subject $6$)}
+  \label{fig:MTBrawPlot}
+\end{figure}
+with the ouput given in Figure \ref{fig:MTBrawPlot}. The following salient features of the data can
+now be noted: (1) there are very few subjects and time points, (2) the response is highly
+non-linear, with a distinctive spike in gene expression levels at $24$ hours, and (3) some data is
+missing, specifically the final observation for subject $6$.
+
+\section{Introducing the model}
+
+\textit{Users already familiar with the theoretical details of functional mixed-effects models in
+general and SME models in particular may wish to skip straight to Section
+\ref{sec:fitting the model} where the illustration of the use of the \texttt{sme} package is
+resumed.}
+
+Given the few time points and aperiodicity, traditional time series analysis models are unlikely to
+yield good results on the type of data described above. Functional mixed-effects models have proven
+to be a popular alternative, capable of dealing with all of the associated issues. In a functional
+mixed-effects model, the observations on subject $i$ are assumed to have come from an underlying
+smooth function of time, $y_i(t)$, which is decomposed into the following components:
+\begin{equation}
+y_i(t) = \mu(t) + v_i(t) + \epsilon_i(t)
+\label{eqn:functional mixed-effects model}
+\end{equation}
+where $\mu(t)$ is the mean function across all subjects, $v_i(t)$ is subject $i$'s deviation from
+that mean function, also assumed to be a smooth function of time and $\epsilon_i(t)$ is an error
+process. Analogous to the linear mixed-effects model for vectorial data \citep{Harville1977},
+$\mu(t)$ is treated as a fixed, but unknown, population parameter while the $v_i(t)$ functions are
+assumed to be randomly sampled from the population as a whole.
+
+In practice, to estimate the function $\mu(t)$ and the distribution of the functions $v_i(t)$, they
+must be parameterised in some way. Typically this is done using \textit{splines} --- piecewise
+polynomials --- although wavelets or Fourier bases are amongst the other options. Splines themselves
+come in different flavours, and the monograph of \cite{Wu2006} is an excellent introduction to the
+various representations in a functional mixed-effects model context.
+
+Essentially the different spline representations vary in the way in which they control the
+\textit{smoothness}, or analogously the non-linearity, of the functions. Achieving the right level
+of smoothing is a critical aspect of the modelling process --- too much smoothing and the underlying
+temporal dynamics will be lost; too little smoothing and spurious conclusions are likely to be made.
+
+B-splines \citep{Boor1978} are a traditional choice of spline representation which control the
+smoothness of the spline by varying the number and location of \textit{knots} that define the break
+points between the piecewise polynomials. This means they suffer from the drawback of only providing
+coarse control over the smoothness as there can only be an integer number of knots, with the upper
+limit dependent on the number of time points. This problem is exacerbated in the replicated genomics
+time series context (and other biological domains such as metabolomics and proteomics) where the
+very small number of time points severely restricts the range of non-linear behaviours that can be
+considred.
+
+Smoothing-splines deal with this issue by using every distinct time point as a knot and avoiding the
+overfitting this would normally incur by introducing a penalty parameter for the lack of smoothness
+or \textit{roughness} of the function. This penalty parameter can take any non-negative real value
+and hence fine control over the smoothness is achieved.
+
+Parameterising the functions in (\ref{eqn:functional mixed-effects model}) as smoothing splines
+allows it to be rewritten in matrix-vector format as
+\begin{equation}
+\bm{y}_{i} = \bm{X}_{i}\bm{\mu} + \bm{X}_{i}\bm{v}_{i} + \bm{\epsilon}_{i}
+\end{equation}
+where $\bm{y}_{i}$ is a vector of all observations on subject $i$, $\bm{X}_{i}$ is an incidence
+matrix mapping the distinct design time points onto the time points at which subject $i$ was
+actually observed, $\bm{\mu}$ is a vector of fitted values for the mean function at the design time
+points, $\bm{v}_{i}$ is a vector of fitted values for the subject-specific function at the design
+time points and $\bm{\epsilon}_{i}$ is the vector of error terms.
+
+Standard practice is to assume that the $\bm{v}_{i}$ and $\bm{\epsilon}_{i}$ terms are multivariate
+normally distributed with zero mean vectors and covariance matrices $\bm{D}$ and $\sigma^2\bm{I}$
+respectively. Under these assumptions, $\bm{y}_{i}$ is multivariate normally distributed, and the
+model parameters $\bm{\mu}$, $\bm{D}$ and $\sigma^2$ which maximise the likelihood can be
+found by treating the $\bm{v}_{i}$ as missing values and employing the Expectation-Maximisation
+(EM) algorithm. The penalty parameters for the roughness of the functions $\mu(t)$ and $v_i(t)$,
+$\lambda_\mu$ and $\lambda_v$, are incorporated by instead finding the values of $\bm{\mu}$,
+$\bm{D}$ and $\sigma^2$ which maximise the \textit{penalised} likelihood.
+
+\section{Fitting the model}
+\label{sec:fitting the model}
+
+SME models control the degree of non-linearity through two smoothing parameters, one for
+the mean function and one for the subject-specific functions, denoted $\lambda_\mu$ and $\lambda_v$
+respectively. The smoothing parameters are non-negative real values; when small there is little
+smoothing and the functions can interpolate the data points. When they tend to infinity then the
+amount of smoothing is maximised and the functions tend to straight lines.
+
+To illustrate this, first the transcript will be fit with $\lambda_\mu = \lambda_v = 0$. The model
+parameters are estimated using the EM algorithm by executing the following code:
+<<zeroSmoothingParameters,fig=TRUE>>=
+fit <- sme(MTB[MTB$variable==6031,c("y","tme","ind")],
+  lambda.mu=0,lambda.v=0)
+plot(fit,type="model",xlab="Hour",ylab="Gene Expression")
+@
+\begin{figure}[tbh]
+  \centering
+  \includegraphics{Tutorial-zeroSmoothingParameters}
+  \caption{Fitting gene transcript \texttt{6031} from the MTB data set with $\lambda_\mu=0$ and
+  $\lambda_v=0$. Note how this combination of smoothing parameters leads to the functions
+  interpolating the data points. The idea of zero measurement error seems implausible}
+  \label{fig:zeroSmoothingParametersPlot}
+\end{figure}
+with the resulting model fit visualised in Figure \ref{fig:zeroSmoothingParametersPlot}. The single
+time point observations for all subjects are shown as circles. The thick red line is the fitted mean
+function, and the dashed black lines are the predicted subject specific functions. As expected, the
+subject specific functions interpolate the data points, which seems implausible as there is likely
+to be at least some degree of measurement error. Furthermore, checking the success flag for the EM
+algorithm:
+<<successFlag>>=
+fit$info
+@
+indicates that the algorithm failed as the likelihood did not increase during one of the iterations
+(zero indicates success). This is likely due to numerical instability introduced by attempting to
+estimate more parameters than there are data points. With the smoothing parameters set to zero,
+there are effectively $31$ model parameters: $5$ parameters for the smoothing-spline representing
+the mean function (one for each time point); $25$ parameters for the between-subject covariance
+matrix ($5$ time points $\times$ $5$ time points) and $1$ for the error variance. Taking into
+account the missing observation for subject $6$ there are only $29$ data points.
+
+At the other extreme, the transcript can be refit with $\lambda_\mu = \lambda_v = 10^7$:
+<<largeSmoothingParameters,fig=TRUE>>=
+fit <- sme(MTB[MTB$variable==6031,c("y","tme","ind")],
+  lambda.mu=1e7,lambda.v=1e7)
+plot(fit,type="model",xlab="Hour",ylab="Gene Expression")
+@
+\begin{figure}[tbh]
+  \centering
+  \includegraphics{Tutorial-largeSmoothingParameters}
+  \caption{Fitting gene transcript \texttt{6031} from the MTB data set with $\lambda_\mu=10^7$ and
+  $\lambda_v=10^7$. Note how this combination of smoothing parameters leads to a model which has
+  dramatically oversmoothed the data, completely ignoring the underlying temporal behaviour
+  indicated by the observations}
+  \label{fig:largeSmoothingParameters}
+\end{figure}
+Referring to Figure \ref{fig:largeSmoothingParameters}, this time the mean function is a straight
+line. Furthermore the subject specific functions coincide with the mean, indicating that with this
+level of smoothing all of the variance in the observations is attributed to measurement error and
+none to subject heterogeneity. Double checking the success flag:
+<<successFlag2>>=
+fit$info
+@
+shows that this time the EM algorithm successfully converged.
+
+Neither of these two extremes has produced a satisfactory model fit. Alternatively, the
+\textit{optimal} smoothing parameters according to some model selection criteria can be found using
+Nelder-Mead simplex search \citep{Nelder1965}. This is the default behaviour for the \texttt{sme}
+function if \texttt{lambda.mu} or \texttt{lambda.v} is not set but, as shown above, users can not
+only get a feel for how changing the smoothing parameters impacts the model fit but also write their
+own search routines by calling the function with the parameters set explicitly.
+
+One of the most popular model selection criteria is Akaike's Information Criterion (AIC)
+\citep{Akaike1974} which scores the model as the log-likelihood with a penalty for the number of
+fitted parameters. Finding the optimal model under this criterion is achieved by executing:
+<<AIC,fig=TRUE>>=
+fit <- sme(MTB[MTB$variable==6031,c("y","tme","ind")],
+  criteria="AIC")
+plot(fit,type="model",xlab="Hour",ylab="Gene Expression")
+@
+\begin{figure}[tbh]
+  \centering
+  \includegraphics{Tutorial-AIC}
+  \caption{The optimal SME model for gene transcript \texttt{6031} from the MTB data set according
+  to the AIC. Compared to Figures \ref{fig:zeroSmoothingParameters} and
+  \ref{fig:largeSmoothingParameters}, this model yields fitted functions that strike a good balance
+  between smoothness and adequately modelling the underlying temporal behaviour suggested by
+  the observations}
+  \label{fig:AIC}
+\end{figure}
+By default, however, the \texttt{sme} function uses the \textit{corrected} AIC of
+\cite{Hurvich1989} which includes a correction for small sample sizes. In addition to these two
+forms of AIC, the user also has the option of the Bayesian Information Criterion
+\citep{Schwarz1978} where the penalty can either depend on the total number of observations across
+all subjects (\texttt{criteria="BIC"}) or the total number of subjects (\texttt{criteria="BICn"}).
+The `correct' criteria to use will depend on how smooth the underlying functions are likely to be
+given any prior knowledge that may be available, and on how large the sample size is. The corrected
+AIC gives good results in most instances, hence it is the default option.
+
+\section{Additional visualisation options}
+
+While Figure \ref{fig:AIC} provides a useful overview of the model fit, it is impossible to
+determine which observations are associated with which subject. As a result, it may be useful to
+produce a trellis plot as with the raw data, except with the fitted subject-specific functions
+superimposed on top. This can be done by running:
+<<rawWithModel,fig=TRUE>>=
+plot(fit,type="raw",showModelFits=TRUE,xlab="Hour",
+  ylab="Gene Expression")
+@
+\begin{figure}[tbh]
+  \centering
+  \includegraphics{Tutorial-rawWithModel}
+  \caption{Raw data for gene transcript \texttt{6031} from the MTB data set with fitted
+  subject-specific curves overlaid}
+  \label{fig:rawWithModel}
+\end{figure}
+with the result given in Figure \ref{fig:rawWithModel}.
+
+It can be insightful to visualise the $95\%$ confidence band for the estimated mean function in
+order to assess the model fit. This is done by passing \texttt{showConfidenceBands=TRUE} to the
+\texttt{plot} function:
+<<confidenceBand,fig=TRUE>>=
+plot(fit,type="model",xlab="Hour",ylab="Gene Expression",
+  showConfidenceBands=TRUE)
+@
+\begin{figure}[tbh]
+  \centering
+  \includegraphics{Tutorial-confidenceBand}
+  \caption{Visualisation of the SME model fit for gene transcript \texttt{6031} from the MTB data
+  set, with the addition of the $95\%$ confidence band for the estimate of the mean function}
+  \label{fig:confidenceBand}
+\end{figure}
+with the result given in Figure \ref{fig:confidenceBand}.
+
+The model fit can further be assessed using a diagnostic plot generated via:
+<<diagnostic,fig=TRUE>>=
+plot(fit,type="diagnostic")
+@
+\begin{figure}[tbh]
+  \centering
+  \includegraphics{Tutorial-diagnostic}
+  \caption{Diagnostic plot for assessing the SME model fit to gene transcript \texttt{6031} from the
+  MTB data set}
+  \label{fig:diagnostic}
+\end{figure}
+which is shown in Figure \ref{fig:diagnostic}. There are four panels to this plot, which has been
+heavily inspired by \cite{Wu2006}. Each panel visualises the standardised residuals in a different
+way in order to help determine whether the data has been adequately modelled. The top panels and
+the bottom left are all intended to detect whether there is any latent structure to the residuals.
+The Q-Q plot in the bottom right helps to determine whether the assumption for normality for the
+residuals is valid. In this particular instance, there does not appear to be any latent structure to
+the residuals. The Q-Q plot raises questions over the assumption of normality due to the extreme
+values but this is largely to be expected given the small number of observations.
+
+\section{Advanced topics}
+
+\subsection{Carrying out multiple model fits in parallel}
+
+Thus far fitting only a single gene transcript has been considered. In a typical genomics data set
+there will be tens of thousands of transcripts to be fit. In order to make this task as efficient as
+possible, the \texttt{sme} package supports OpenMP (\url{http://www.openmp.org/}) for using multiple
+threads to carry out multiple model fits in parallel. The MTB data set contains ten gene transcripts
+in total in order to illustrate this process.
+
+First, all ten transcripts can be fit one after the other as follows:
+<<serial>>=
+system.time(fits <- lapply(unique(MTB$variable),
+  function(v) sme(MTB[MTB$variable==v,c("y","tme","ind")])))
+@
+Alternatively, the \texttt{sme} function can be called on the entire MTB data set. As this
+\texttt{data.frame} contains a \texttt{variable} factor, the \texttt{sme} function will
+automatically recognise that multiple fits should be carried out in parallel. By default, it will
+use two threads which should roughly halve the run time, although there will be some inefficiency
+due to the overheads of thread creation (these overheads are greater on Windows than other operating
+systems, and are especially noticable with such a small example). The number of threads can be
+specified explicitly through the \texttt{numberOfThreads} parameter:
+<<parallel>>=
+system.time(fits <- sme(MTB,numberOfThreads=3))
+@
+
+\subsection{Using less knots}
+
+Although using every distinct time point as a knot works well for the MTB data set, and works well
+for the vast majority of other genomics time series experiments, in some instances it may be
+inappropriate. The \texttt{sme} package contains a second data set, which consists of a single gene
+transcript from an experiment investigating an inflammatory condition in children. This will be
+referred to as the `inflammatory' data set. In this experiment the sampling times are highly
+irregular, as can be seen by visualising the data:
+<<visualiseInflammatory,fig=TRUE>>=
+data(inflammatory)
+plot(y~tme,data=inflammatory,xlab="Day",
+  ylab="Gene Expression")
+for(ind in inflammatory$ind) lines(y~tme,
+  data=inflammatory[inflammatory$ind==ind,],
+  lty="dashed")
+@
+\begin{figure}[tbh]
+  \centering
+  \includegraphics{Tutorial-visualiseInflammatory}
+  \caption{Raw data for the example gene transcript in the inflammatory data set. Note the
+  irregular time points at which the observations were collected}
+  \label{fig:visualiseInflammatory}
+\end{figure}
+shown in Figure \ref{fig:visualiseInflammatory}. The single time point observations are shown as
+circles which have been joined by lines where they belong to the same subject. Using each distinct
+time point as a knot will still work but will be slow. Some speed can be gained by relaxing
+the convergence criteria for the Nelder-Mead search by setting the parameter \texttt{deltaNM=0.1} 
+(the default is $0.001$):
+<<slowInflammatory,fig=TRUE>>=
+system.time(fit <- sme(inflammatory,
+  deltaNM=0.1))
+plot(fit,xlab="Day",ylab="Gene Expression")
+@
+\begin{figure}[tbh]
+  \centering
+  \includegraphics{Tutorial-slowInflammatory}
+  \caption{SME model fit to the example gene transcript in the inflammatory data set when using
+  every distinct time point as a knot}
+  \label{fig:slowInflammatory}
+\end{figure}
+with the model fit visualised in Figure \ref{fig:slowInflammatory}. Alternatively, a vector of time
+points to use as knots can be specified as an argument to the \texttt{sme} function. Note
+that these should be \textit{internal} knots, as the time points at the extremes of the time course
+will automatically be used. For example, using five equally spaced knots can be achieved by
+running:
+<<fastInflammatory,fig=TRUE>>=
+my.knots <- seq(min(inflammatory$tme),max(inflammatory$tme),
+  length.out=7)[-c(1,7)]
+my.knots
+system.time(fit <- sme(inflammatory,knots=my.knots,
+  deltaNM=0.1))
+plot(fit,xlab="Day",ylab="Gene Expression")
+@
+\begin{figure}[tbh]
+  \centering
+  \includegraphics{Tutorial-fastInflammatory}
+  \caption{SME model fit to the example gene transcript in the inflammatory data set when using only
+  five equally spaced internal knots}
+  \label{fig:fastInflammatory}
+\end{figure}
+which executes significantly faster. Comparing the visualisation of the model fit, given in Figure
+\ref{fig:fastInflammatory}, with Figure \ref{fig:slowInflammatory}, ultimately there is very little
+difference between the two. Note that in these situations it is not overly critical to pick a `good'
+number of knots; provided `enough' knots are used so that a sufficient range of non-linear
+behaviours can be considered. The smoothing parameters will take care of avoiding overfitting as
+usual.
+
+\bibliography{sme}
+
+\end{document}
