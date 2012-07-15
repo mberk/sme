@@ -127,7 +127,7 @@ double SMEWrapper(
   
   if(*smeParameters->verbose)
   {
-    Rprintf("%f,%f (%f,%f) (%f,%f) gave a corrected AIC of %f in %d iterations\n", par[0], par[1], lambdaMu, lambdaV, *smeParameters->dfMu, *smeParameters->dfV, score, *smeParameters->iterations);
+    Rprintf("%f,%f (%f,%f) (%f,%f) gave a score of %f in %d iterations\n", par[0], par[1], lambdaMu, lambdaV, *smeParameters->dfMu, *smeParameters->dfV, score, *smeParameters->iterations);
   }
   
   return score;
@@ -450,14 +450,14 @@ void SMEOptimization(
           alpha,
           beta,
           gamma,
-          /*0,*/*verbose ? 10 : 0,
+          0,/**verbose ? 10 : 0,*/
           &numberOfFunctionCalls,
           maxNMIterations);
 
     *lambdaMu = abs(lambdas[0]);//exp(lambdas[0]);
     *lambdaV = abs(lambdas[1]);//exp(lambdas[1]);
     
-    if(*verbose) Rprintf("NM chose %f,%f (%f,%f) which gave minimum %f\n", lambdas[0], lambdas[1], *lambdaMu, *lambdaV, minimum);
+    if(*verbose) Rprintf("NM chose %f,%f (%f,%f) which gave minimum %f with %03d runs of the EM aglorithm\n", lambdas[0], lambdas[1], *lambdaMu, *lambdaV, minimum, numberOfFunctionCalls);
 
     //Refit with optimal lambdas
     SME(y, 
@@ -656,7 +656,7 @@ void SME(double* y,
   
   for(*iterations = 0; *iterations < *maxIterations && (*likelihood - oldLikelihood) > *deltaEM; (*iterations)++)
   {
-    EStep(yi, Xi, inverseVi, *n, &Dv, &muAsVector, vi, epsiloni, *zeroIntercept);
+    EStep(yi, Xi, inverseVi, *N, *n, &Dv, &muAsVector, vi, epsiloni, *zeroIntercept);
     MStep(yi,
           &XAsMatrix,
           Xi,
@@ -676,18 +676,16 @@ void SME(double* y,
 
     oldLikelihood = *likelihood;
     calculateLikelihood(yi, Xi, inverseVi, &muAsVector, *n, likelihood);
-
-    //if(*verbose) Rprintf("Iteration %03d: delta likelihood = %f\n", *iterations + 1, *likelihood - oldLikelihood);
   }
 
   calculateDegreesOfFreedom(&XAsMatrix, Xi, inverseVi, &GAsMatrix, &Dv, *lambdaMu, *n, dfMu, dfV);
-  EStep(yi, Xi, inverseVi, *n, &Dv, &muAsVector, vi, epsiloni, *zeroIntercept);
+  EStep(yi, Xi, inverseVi, *N, *n, &Dv, &muAsVector, vi, epsiloni, *zeroIntercept);
 
   if((*likelihood - oldLikelihood) < 0)
   {
     *info = INFO_LIKELIHOOD_DECREASED;
   }
-  if(*verbose) Rprintf("Iteration %03d: delta likelihood = %f\n", *iterations + 1, *likelihood - oldLikelihood);
+  if(*verbose) Rprintf("EM converged in %03d iterations\n", *iterations + 1);
 
   for(i = 0; i < *n; i++)
   {
@@ -714,19 +712,27 @@ void SME(double* y,
   free(yi);
 }
 
-void EStep(Vector** yi, Matrix** Xi, Matrix** inverseVi, int n, Matrix* Dv, Vector* mu, Vector** vi, Vector** epsiloni, int zeroIntercept)
+void EStep(Vector** yi, Matrix** Xi, Matrix** inverseVi, int N, int n, Matrix* Dv, Vector* mu, Vector** vi, Vector** epsiloni, int zeroIntercept)
 {
   Vector yiCentered;
   Vector inverseViYiCentered;
   int i;
-  
+
+  double* yiCenteredBuffer = calloc(N, sizeof(double));
+  double* currentYiCenteredPointer = yiCenteredBuffer;
+
+  double* inverseViYiCenteredBuffer = calloc(N, sizeof(double));
+  double* currentInverseViYiCenteredPointer = inverseViYiCenteredBuffer;
+
   for(i = 0; i < n; i++)
   {
-    yiCentered.pointer = calloc(yi[i]->length, sizeof(double));
+    //yiCentered.pointer = calloc(yi[i]->length, sizeof(double));
     yiCentered.length = yi[i]->length;
+    yiCentered.pointer = currentYiCenteredPointer;
     
-    inverseViYiCentered.pointer = calloc(yi[i]->length, sizeof(double));
+    //inverseViYiCentered.pointer = calloc(yi[i]->length, sizeof(double));
     inverseViYiCentered.length = yi[i]->length;
+    inverseViYiCentered.pointer = currentInverseViYiCenteredPointer;
 
     //yiCentered <- (yi - Xi %*% eta)
     matrixVectorMultiply(Xi[i], mu, yi[i], &yiCentered, -1.0, 1.0, 0);
@@ -743,9 +749,14 @@ void EStep(Vector** yi, Matrix** Xi, Matrix** inverseVi, int n, Matrix* Dv, Vect
       vi[i]->pointer[0] = 0.0;
     }
 
-    free(inverseViYiCentered.pointer);
-    free(yiCentered.pointer);
+    //free(inverseViYiCentered.pointer);
+    //free(yiCentered.pointer);
+    currentYiCenteredPointer += yi[i]->length;
+    currentInverseViYiCenteredPointer += yi[i]->length;
   }
+
+  free(inverseViYiCenteredBuffer);
+  free(yiCenteredBuffer);
 }
 
 void MStep(Vector** yi,

@@ -74,7 +74,7 @@ void SME(double* y,
 
 void calculateYiPrecision(Matrix** Xi, Matrix* Dv, double* sigmaSquared, int n, Matrix** inverseVi);
 
-void EStep(Vector** yi, Matrix** Xi, Matrix** inverseVi, int n, Matrix* Dv, Vector* mu, Vector** vi, Vector** epsiloni, int zeroIntercept);
+void EStep(Vector** yi, Matrix** Xi, Matrix** inverseVi, int N, int n, Matrix* Dv, Vector* mu, Vector** vi, Vector** epsiloni, int zeroIntercept);
 void MStep(Vector** yi,
            Matrix* X,
            Matrix** Xi,

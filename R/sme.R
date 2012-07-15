@@ -378,7 +378,7 @@ sme.list <- function(
         call=call,
         nobs=length(y),
         smoothingParameters=c(mu=lambdaMu,v=lambdaV),
-        parameters=list(sigmaSquared=sigma,D=D),
+        parameters=list(sigmaSquared=sigma,D=matrix(D,nrow=p)),
         iterations=iterations,
         info=info)
       if(!is.null(knots)) return.value$knots <- knots
