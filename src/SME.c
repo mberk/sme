@@ -814,9 +814,10 @@ void MStep(Vector** yi,
 
     choleskyFactorization(inverseVi[i], &U);
     // A <- Dv %*% t(X)
-    multiplyMatrices(Dv, Xi[i], &A, 0, 1);
+    //multiplyMatrices(Dv, Xi[i], &A, 0, 1);
     // A <- Dv %*% t(X) %*% t(chol(solve(Vi[[1]])))
-    multiplyMatrices(&A, &U, &A, 0, 1);
+    //multiplyMatrices(&A, &U, &A, 0, 1);
+    multiplyMatrices(Xi[i], &U, &A, 1, 1);
 
     symmetricRankKUpdate(&A, &conditionalCovariance, 1.0, 1.0);
     symmetricRank1Update(D, vi[i], 1.0);
@@ -831,6 +832,17 @@ void MStep(Vector** yi,
     free(A.pointer);
     free(U.pointer);
   }
+  U.pointer = calloc(Dv->columns * Dv->rows, sizeof(double));
+  U.rows = Dv->columns;
+  U.columns = Dv->rows;
+  choleskyFactorization(&conditionalCovariance, &U);
+  A.pointer = calloc(Dv->columns * U.columns, sizeof(double));
+  A.rows = Dv->rows;
+  A.columns = Dv->columns;
+  multiplyMatrices(Dv, &U, &A, 0, 1);
+  symmetricRankKUpdate(&A, &conditionalCovariance, 1.0, 0.0);
+  free(U.pointer);
+  free(A.pointer);
 
   for(i = 0; i < conditionalCovariance.rows * conditionalCovariance.columns; i++)
   {

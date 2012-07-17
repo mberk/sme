@@ -1,10 +1,14 @@
+2012-07-17  Maurice Berk <maurice.berk01@imperial.ac.uk>
+
+    * src/SME.c: minor optimizations to MStep()
+
 2012-07-14  Maurice Berk <maurice.berk01@imperial.ac.uk>
 
     * DESCRIPTION: Version is now 0.4
 
     * R/sme.R: sme.data.frame now correctly returns D as a matrix rather than a vector
 
-    * src/sme.h: added N as a parameter to EStep()
+    * src/SME.h: added N as a parameter to EStep()
 
-    * src/sme.c: added N as a parameter to EStep(), minor optimizations to EStep(), improved
+    * src/SME.c: added N as a parameter to EStep(), minor optimizations to EStep(), improved
     debugging output when using the verbose parameter
