@@ -417,6 +417,19 @@ getRoughnessMatrix <- function(object)
 
 vcov.sme <- function(object,...)
 {
+  require(splines)
+
+  if(is.null(object$knots))
+  {
+    X <- incidenceMatrix(object$data$tme)
+    Xi <- split.data.frame(X,object$data$ind)
+  }
+  else
+  {
+    X <- ns(object$data$tme,knots=object$knots,intercept=T)
+    Xi <- split.data.frame(X,object$data$ind)
+  }
+
   G <- getRoughnessMatrix(object)
   Dv <- solve(solve(object$parameters$D) + object$smoothingParameters["v"] * G)
   Vi <- lapply(Xi,function(Xi) Xi %*% Dv %*% t(Xi) + diag(object$parameters$sigmaSquared,nrow=nrow(Xi)))
