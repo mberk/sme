@@ -1,3 +1,11 @@
+2012-07-19  Maurice Berk <maurice.berk01@imperial.ac.uk>
+
+    * R/sme.R: added getRoughnessMatrix(), modified vcov.sme to accommodate this
+
+    * man/getRoughnessMatrix.Rd: new help file to accompany the new function
+
+    * NAMESPACE: updated namespace to export getRoughnessMatrix
+
 2012-07-17  Maurice Berk <maurice.berk01@imperial.ac.uk>
 
     * src/SME.c: minor optimizations to MStep()

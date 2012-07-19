@@ -390,7 +390,7 @@ sme.list <- function(
   return(return.value)
 }
 
-vcov.sme <- function(object,...)
+getRoughnessMatrix <- function(object)
 {
   require(splines)
 
@@ -411,6 +411,13 @@ vcov.sme <- function(object,...)
     G <- roughnessMatrix(incidenceMatrix(c(min.tme,object$knots,max.tme)))
     G <- t(B) %*% G %*% B
   }
+
+  G
+}
+
+vcov.sme <- function(object,...)
+{
+  G <- getRoughnessMatrix(object)
   Dv <- solve(solve(object$parameters$D) + object$smoothingParameters["v"] * G)
   Vi <- lapply(Xi,function(Xi) Xi %*% Dv %*% t(Xi) + diag(object$parameters$sigmaSquared,nrow=nrow(Xi)))
   inverseVi <- lapply(Vi,solve)
