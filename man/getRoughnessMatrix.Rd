@@ -40,5 +40,5 @@ Green, P. J. & Silverman, B. W. (1994). \emph{Nonparametric Regression and Gener
 \examples{
   data(MTB)
   fit <- sme(MTB[MTB$variable==6031,c("y","tme","ind")])
-  roughnessMatrix(fit)
+  getRoughnessMatrix(fit)
 }
