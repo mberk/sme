@@ -1,3 +1,8 @@
+2012-07-20  Maurice Berk <maurice.berk01@imperial.ac.uk>
+
+    * src/SME.c: removed original implementation of degrees of freedom calculation which had been
+    commented out but remained in the file for some reason
+
 2012-07-19  Maurice Berk <maurice.berk01@imperial.ac.uk>
 
     * R/sme.R: added getRoughnessMatrix(), modified vcov.sme to accommodate this
