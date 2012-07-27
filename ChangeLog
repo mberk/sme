@@ -1,3 +1,8 @@
+2012-07-27  Maurice Berk <maurice.berk01@imperial.ac.uk>
+
+    * R/sme.R: fixed logLik.sme to read the degrees of freedom from the correct object field, fixed
+    sme.list to properly return model residuals
+
 2012-07-20  Maurice Berk <maurice.berk01@imperial.ac.uk>
 
     * src/SME.c: removed original implementation of degrees of freedom calculation which had been

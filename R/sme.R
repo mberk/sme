@@ -370,7 +370,7 @@ sme.list <- function(
       return.value <- list(
         coefficients=coefficients,
         fitted=fitted,
-        resid=resid,
+        resid=residuals,
         data=data,
         #em=em,
         logLik=likelihood,
@@ -452,7 +452,7 @@ rstandard.sme <- function(model,...)
 logLik.sme <- function(object,...)
 {
   logLikelihood <- object$logLik
-  attr(logLikelihood,"df") <- object$dfMu + object$dfV
+  attr(logLikelihood,"df") <- object$df[1] + object$df[2]
   attr(logLikelihood,"nobs") <- length(resid(object))
   logLikelihood
 }
