@@ -452,7 +452,7 @@ rstandard.sme <- function(model,...)
 logLik.sme <- function(object,...)
 {
   logLikelihood <- object$logLik
-  attr(logLikelihood,"df") <- object$df[1] + object$df[2]
+  attr(logLikelihood,"df") <- unname(object$df[1] + object$df[2])
   attr(logLikelihood,"nobs") <- length(resid(object))
   logLikelihood
 }

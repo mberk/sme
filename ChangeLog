@@ -1,3 +1,7 @@
+2012-07-29  Maurice Berk <maurice.berk01@imperial.ac.uk>
+
+    * R/sme.R: removed superfluous names from degrees of freedom attribute returned by logLik.sme
+
 2012-07-27  Maurice Berk <maurice.berk01@imperial.ac.uk>
 
     * R/sme.R: fixed logLik.sme to read the degrees of freedom from the correct object field, fixed
