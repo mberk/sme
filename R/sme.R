@@ -184,7 +184,7 @@ sme.list <- function(
   deltaEM=1e-3,
   deltaNM=1e-3,
   criteria="AICc",
-  numberOfThreads=2,
+  numberOfThreads=-1,
   ...)
 {
   ys <- object

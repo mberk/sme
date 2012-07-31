@@ -165,8 +165,15 @@ void SMEOptimizationMultiple(
 {
   int i;
 
-  omp_set_dynamic(0);
-  omp_set_num_threads(*numberOfThreads);
+  if(*numberOfThreads == -1)
+  {
+    omp_set_dynamic(1);
+  }
+  else
+  {
+    omp_set_dynamic(0);
+    omp_set_num_threads(*numberOfThreads);
+  }
 
   SMEParameters* allParameters = calloc(*M, sizeof(SMEParameters));
   
@@ -282,8 +289,15 @@ void SMEMultiple(
 {
   int i;
 
-  omp_set_dynamic(0);
-  omp_set_num_threads(*numberOfThreads);
+  if(*numberOfThreads == -1)
+  {
+    omp_set_dynamic(1);
+  }
+  else
+  {
+    omp_set_dynamic(0);
+    omp_set_num_threads(*numberOfThreads);
+  }
 
   SMEParameters* allParameters = calloc(*M, sizeof(SMEParameters));
   

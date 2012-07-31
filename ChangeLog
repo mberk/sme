@@ -1,3 +1,11 @@
+2012-07-31  Maurice Berk <maurice.berk01@imperial.ac.uk>
+
+    * R/sme.R: the default option for number of threads to use when carrying out multiple SME fits
+    in parallel is now -1, which indicates OpenMP should manage the number of threads dynamically
+
+    * src/SME.c: added the ability to let OpenMP manage the number of threads dynamically by
+    passing a value of -1 for numberOfThreads to SMEOptimizationMultiple() and SMEMultiple()
+
 2012-07-29  Maurice Berk <maurice.berk01@imperial.ac.uk>
 
     * R/sme.R: removed superfluous names from degrees of freedom attribute returned by logLik.sme
