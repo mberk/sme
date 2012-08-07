@@ -1081,6 +1081,8 @@ void calculateDegreesOfFreedom(Matrix* X, Matrix** Xi, Matrix** inverseVi, Matri
     freeMatrix(tXiinverseViXiDvs[i]);
   }
 
+  free(tXiinverseViXis);
+  free(tXiinverseViXiDvs);
   free(U.pointer);
   free(A.pointer);
   free(inverseHessian.pointer);

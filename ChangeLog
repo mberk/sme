@@ -1,3 +1,7 @@
+2012-08-07  Maurice Berk <maurice.berk01@imperial.ac.uk>
+
+    * src/SME.c: fixed a memory leak in calculateDegreesOfFreedom()
+
 2012-07-31  Maurice Berk <maurice.berk01@imperial.ac.uk>
 
     * R/sme.R: the default option for number of threads to use when carrying out multiple SME fits
