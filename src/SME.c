@@ -14,7 +14,8 @@
 // Copyright - Maurice Berk (maurice.berk01@imperial.ac.uk) (http://www2.imperial.ac.uk/~mab201)
 
 #include <R.h>
-#include <R_ext/Applic.h>
+//#include <R_ext/Applic.h>
+#include "NelderMead.h"
 
 #include <omp.h>
 
@@ -452,7 +453,7 @@ void SMEOptimization(
 
   for(numberOfRetries = 0, *smeParameters.info = 1; *smeParameters.info && numberOfRetries < maxRetries; lambdas[0] *= 10.0, lambdas[1] *= 10.0, numberOfRetries++)
   {
-    nmmin(numberOfParameters,
+    NelderMead(numberOfParameters,
           lambdas,
           lambdas,
           &minimum,
