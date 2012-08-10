@@ -15,11 +15,16 @@
 
 #include <R.h>
 #include <R_ext/BLAS.h>
-#include <R_ext/Lapack.h>
 
 #include "LinearAlgebra.h"
 #include "Matrix.h"
 #include "Vector.h"
+
+extern void F77_NAME(dgesv)(int*, int*, double*, int*, int*, double*, int*, int*);
+extern void F77_NAME(dpotf2)(char*, int*, double*, int*, int*);
+extern void F77_NAME(dgels)(char*, int*, int*, int*, double*, int*, double*, int*, double*, int*, int*);
+extern void F77_NAME(dgesvd)(char*, char*, int*, int*, double*, int*, double*, double*, int*, double*, int*, double*, int*, int*);
+extern void F77_NAME(dgetrf)(int*, int*, double*, int*, int*, int*);
 
 void invertMatrix(Matrix* matrix, Matrix* result)
 {

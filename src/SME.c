@@ -14,7 +14,6 @@
 // Copyright - Maurice Berk (maurice.berk01@imperial.ac.uk) (http://www2.imperial.ac.uk/~mab201)
 
 #include <R.h>
-//#include <R_ext/Applic.h>
 #include "NelderMead.h"
 
 #include <omp.h>
@@ -596,13 +595,10 @@ void SME(double* y,
   Vector** timei;
   Matrix** Xi;
 
-  //#pragma omp critical
   yi = splitVector(&yAsVector, individual, &numberOfVectors);
 
-  //#pragma omp critical
   timei = splitVector(&timePointsAsVector, individual, &numberOfVectors);
 
-  //#pragma omp critical
   Xi = splitMatrix(&XAsMatrix, individual, &numberOfMatrices);
   //Matrix* Z = constructBlockDiagonalMatrix(Zi, numberOfMatrices);
   Matrix** inverseVi = calloc(*n, sizeof(Matrix*));
@@ -640,8 +636,6 @@ void SME(double* y,
   muPenaltyFactorization.rows = *p;
   muPenaltyFactorization.columns = *p;
 
-  //choleskyFactorization(&muPenalty, &muPenaltyFactorization);
-  #pragma omp critical
   matrixSquareRoot(&muPenalty, &muPenaltyFactorization);
 
   //Initialisation
@@ -661,8 +655,9 @@ void SME(double* y,
   invertMatrix(&Dv, &Dv);
 
   calculateYiPrecision(Xi, &Dv, sigmaSquared, *n, inverseVi);
-  //#pragma omp critical
+
   penalisedLeastSquaresUsingFactorization(&XAsMatrix, &yAsVector, &muAsVector, &muPenaltyFactorization);
+
   if(*zeroIntercept)
   {
     muAsVector.pointer[0] = 0.0;
@@ -879,8 +874,9 @@ void MStep(Vector** yi,
 
   *sigmaSquared = (1.0) / N * (sumOfSquares + *sigmaSquared * N - *sigmaSquared * *sigmaSquared * trace);
 
-  //#pragma omp critical
   penalisedLeastSquaresUsingFactorization(X, &yCentered, mu, muPenaltyFactorization);
+
+
   if(zeroIntercept)
   {
     mu->pointer[0] = 0.0;
