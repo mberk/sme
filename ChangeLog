@@ -1,3 +1,8 @@
+2012-09-01  Maurice Berk <maurice.berk01@imperial.ac.uk>
+
+    * Makevars: replaced PKG_FFLAGS=-frecursive with the more appropriate
+    PKG_FFLAGS=$(SHLIB_OPENMP_FFLAGS)
+
 2012-08-10  Maurice Berk <maurice.berk01@imperial.ac.uk>
 
     * src/LinearAlgebra.c: removed any references to the LAPACK routines provided by R
