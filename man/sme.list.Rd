@@ -6,7 +6,7 @@
 \usage{
 \method{sme}{list}(object,tme,ind,verbose=F,lambda.mu=NULL,lambda.v=NULL,maxIter=500,
 knots=NULL,zeroIntercept=F,deltaEM=1e-3,deltaNM=1e-3,criteria="AICc",
-numberOfThreads=2,\dots)
+numberOfThreads=-1,\dots)
 }
 \alias{sme.list}
 \arguments{
@@ -32,7 +32,8 @@ numberOfThreads=2,\dots)
   which criteria to use to score a particular combination of \code{lambda.mu} and \code{lambda.v} in
   the Nelder-Mead search}
   \item{numberOfThreads}{The number of threads to use to fit the multiple smoothing-splines
-  mixed-effects models simultaneously}
+  mixed-effects models simultaneously. When \code{numberOfThreads=-1}, as is the default, the
+  OpenMP system will handle thread creation dynamically}
   \item{\dots}{additional arguments, currently not used}
 }
 \description{

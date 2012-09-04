@@ -1,3 +1,24 @@
+2012-09-04  Maurice Berk <maurice.berk01@imperial.ac.uk>
+
+    * DESCRIPTION: Date is now 2012-09-04
+
+    * src/*.f: collated all individual LAPACK routines into a single file, LapackSubset.f
+
+    * man/sme.list.Rd: updated documentation for sme.list to reflect the new default value for the
+    parameter numberOfThreads
+
+    * src/LinearAlgebra.c: changed to UNIX line endings
+
+    * src/NelderMead.c: changed to UNIX line endings
+
+    * src/NelderMead.h: changed to UNIX line endings
+
+    * src/SME.h: changed to UNIX line endings
+
+    * src/SME.c: changed to UNIX line endings
+
+    * src/Makevars: changed to UNIX line endings
+
 2012-09-01  Maurice Berk <maurice.berk01@imperial.ac.uk>
 
     * Makevars: replaced PKG_FFLAGS=-frecursive with the more appropriate
