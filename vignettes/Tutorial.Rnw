@@ -217,7 +217,7 @@ plot(fit,type="model",xlab="Hour",ylab="Gene Expression")
   \centering
   \includegraphics{Tutorial-AIC}
   \caption{The optimal SME model for gene transcript \texttt{6031} from the MTB data set according
-  to the AIC. Compared to Figures \ref{fig:zeroSmoothingParameters} and
+  to the AIC. Compared to Figures \ref{fig:zeroSmoothingParametersPlot} and
   \ref{fig:largeSmoothingParameters}, this model yields fitted functions that strike a good balance
   between smoothness and adequately modelling the underlying temporal behaviour suggested by
   the observations}
@@ -304,11 +304,11 @@ system.time(fits <- lapply(unique(MTB$variable),
 @
 Alternatively, the \texttt{sme} function can be called on the entire MTB data set. As this
 \texttt{data.frame} contains a \texttt{variable} factor, the \texttt{sme} function will
-automatically recognise that multiple fits should be carried out in parallel. By default, it will
-use two threads which should roughly halve the run time, although there will be some inefficiency
+automatically recognise that multiple fits should be carried out in parallel. By default, the OpenMP
+system will automatically select the number of threads to be used. There will be some inefficiency
 due to the overheads of thread creation (these overheads are greater on Windows than other operating
-systems, and are especially noticable with such a small example). The number of threads can be
-specified explicitly through the \texttt{numberOfThreads} parameter:
+systems, and are especially noticable with such a small example). Alternatively the number of
+threads can be specified explicitly through the \texttt{numberOfThreads} parameter:
 <<parallel>>=
 system.time(fits <- sme(MTB,numberOfThreads=3))
 @

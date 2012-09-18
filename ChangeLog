@@ -1,3 +1,11 @@
+2012-09-18  Maurice Berk <maurice.berk01@imperial.ac.uk>
+
+    * DESCRIPTION: Date is now 2012-09-18
+
+    * vignettes/Tutorial.Rnw: updated description of OpenMP functionality to reflect the default
+    behaviour changing from using two threads to letting the OpenMP system automatically handle the
+    number of threads. Fixed a broken reference to one of the plots
+
 2012-09-04  Maurice Berk <maurice.berk01@imperial.ac.uk>
 
     * DESCRIPTION: Date is now 2012-09-04
