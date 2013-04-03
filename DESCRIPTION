@@ -1,8 +1,8 @@
 Package: sme
-Version: 0.4
-Date: 2012-09-18
+Version: 0.6
+Date: 2013-04-03
 Title: Smoothing-splines Mixed-effects Models
-Authors@R: c(person("Maurice", "Berk", email="maurice.berk01@imperial.ac.uk",role=c("aut","cre")))
+Authors@R: c(person("Maurice", "Berk", email="maurice@mauriceberk.com",role=c("aut","cre")))
 Depends: R (>= 2.15.0), splines, lattice, stats
 Description: A package for fitting smoothing-splines mixed-effects models to replicated functional
   data sets.

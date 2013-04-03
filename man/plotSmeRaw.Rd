@@ -1,6 +1,6 @@
 % File sme/man/plotSmeRaw.Rd
 % Part of the sme package for R
-% Distributed under GPL 3 or later: see sme/LICENCE
+% Distributed under GPL 3 or later
 
 \name{plotSmeRaw}
 \title{Visualisation of raw data for a smoothing-splines mixed-effects model}
@@ -31,7 +31,7 @@ plotSmeRaw(x,xlab="Time",ylab="Y",mainTitle="",showModelFits=TRUE,showRawLines=F
 \references{
   Berk, M. (2012). \emph{Smoothing-splines Mixed-effects Models in R}. Preprint
 }
-\author{Maurice Berk \email{maurice.berk01@imperial.ac.uk}}
+\author{Maurice Berk \email{maurice@mauriceberk.com}}
 \seealso{\code{\link{plot.sme}}, \code{\link{plotSmeModel}}, \code{\link{plotSmeDiagnostic}}}
 \examples{
   data(MTB)

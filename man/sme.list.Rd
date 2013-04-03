@@ -1,6 +1,6 @@
 % File sme/man/sme.data.frame.Rd
 % Part of the sme package for R
-% Distributed under GPL 3 or later: see sme/LICENCE
+% Distributed under GPL 3 or later
 \name{sme.list}
 \title{Carry out mulitple independent smoothing-splines mixed-effects model fits simultaneously}
 \usage{
@@ -53,6 +53,6 @@ distinct time points.
 \references{
   Berk, M. (2012). \emph{Smoothing-splines Mixed-effects Models in R}. Preprint
 }
-\author{Maurice Berk \email{maurice.berk01@imperial.ac.uk}}
+\author{Maurice Berk \email{maurice@mauriceberk.com}}
 \seealso{\code{\link{smeObject}}, \code{\link{sme}}, \code{\link{sme.data.frame}},
 \code{\link{plot.sme}}}

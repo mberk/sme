@@ -1,4 +1,27 @@
-2012-09-18  Maurice Berk <maurice.berk01@imperial.ac.uk>
+2013-04-03  Maurice Berk <maurice@mauriceberk.com>
+
+    * DESCRIPTION: Date is now 2013-04-03, Version is now 0.6
+
+    * GPL-3, LICENCE: removed unnecessary files
+
+    * man/*.Rd: updated author's email address, removed reference to LICENCE file
+
+    * man/sme.Rd: removed an example to speed up the runtime
+
+    * src/*.c: updated author's email address in comments
+
+    * src/*.h: updated author's email address in comments
+
+2013-04-02  Maurice Berk <maurice@mauriceberk.com>
+
+    * DESCRIPTION: Date is now 2013-04-02, Version is now 0.5, author's email address updated
+
+    * src/SME.c: OpenMP code is now properly guarded to ensure it's supported by the compiler
+
+    * vignettes/Tutorial.Rnw: added a sentence explaining that OpenMP may not be supported depending
+    on the platform
+
+2012-09-18  Maurice Berk <maurice@mauriceberk.com>
 
     * DESCRIPTION: Date is now 2012-09-18
 
@@ -6,7 +29,7 @@
     behaviour changing from using two threads to letting the OpenMP system automatically handle the
     number of threads. Fixed a broken reference to one of the plots
 
-2012-09-04  Maurice Berk <maurice.berk01@imperial.ac.uk>
+2012-09-04  Maurice Berk <maurice@mauriceberk.com>
 
     * DESCRIPTION: Date is now 2012-09-04
 
@@ -27,12 +50,12 @@
 
     * src/Makevars: changed to UNIX line endings
 
-2012-09-01  Maurice Berk <maurice.berk01@imperial.ac.uk>
+2012-09-01  Maurice Berk <maurice@mauriceberk.com>
 
     * Makevars: replaced PKG_FFLAGS=-frecursive with the more appropriate
     PKG_FFLAGS=$(SHLIB_OPENMP_FFLAGS)
 
-2012-08-10  Maurice Berk <maurice.berk01@imperial.ac.uk>
+2012-08-10  Maurice Berk <maurice@mauriceberk.com>
 
     * src/LinearAlgebra.c: removed any references to the LAPACK routines provided by R
 
@@ -47,11 +70,11 @@
     * src/NelderMead.c, src/NelderMead.h: adapted the built-in R NelderMead search function nmmin()
     to be thread-safe
 
-2012-08-07  Maurice Berk <maurice.berk01@imperial.ac.uk>
+2012-08-07  Maurice Berk <maurice@mauriceberk.com>
 
     * src/SME.c: fixed a memory leak in calculateDegreesOfFreedom()
 
-2012-07-31  Maurice Berk <maurice.berk01@imperial.ac.uk>
+2012-07-31  Maurice Berk <maurice@mauriceberk.com>
 
     * R/sme.R: the default option for number of threads to use when carrying out multiple SME fits
     in parallel is now -1, which indicates OpenMP should manage the number of threads dynamically
@@ -59,21 +82,21 @@
     * src/SME.c: added the ability to let OpenMP manage the number of threads dynamically by
     passing a value of -1 for numberOfThreads to SMEOptimizationMultiple() and SMEMultiple()
 
-2012-07-29  Maurice Berk <maurice.berk01@imperial.ac.uk>
+2012-07-29  Maurice Berk <maurice@mauriceberk.com>
 
     * R/sme.R: removed superfluous names from degrees of freedom attribute returned by logLik.sme
 
-2012-07-27  Maurice Berk <maurice.berk01@imperial.ac.uk>
+2012-07-27  Maurice Berk <maurice@mauriceberk.com>
 
     * R/sme.R: fixed logLik.sme to read the degrees of freedom from the correct object field, fixed
     sme.list to properly return model residuals
 
-2012-07-20  Maurice Berk <maurice.berk01@imperial.ac.uk>
+2012-07-20  Maurice Berk <maurice@mauriceberk.com>
 
     * src/SME.c: removed original implementation of degrees of freedom calculation which had been
     commented out but remained in the file for some reason
 
-2012-07-19  Maurice Berk <maurice.berk01@imperial.ac.uk>
+2012-07-19  Maurice Berk <maurice@mauriceberk.com>
 
     * R/sme.R: added getRoughnessMatrix(), modified vcov.sme to accommodate this
 
@@ -81,11 +104,11 @@
 
     * NAMESPACE: updated namespace to export getRoughnessMatrix
 
-2012-07-17  Maurice Berk <maurice.berk01@imperial.ac.uk>
+2012-07-17  Maurice Berk <maurice@mauriceberk.com>
 
     * src/SME.c: minor optimizations to MStep()
 
-2012-07-14  Maurice Berk <maurice.berk01@imperial.ac.uk>
+2012-07-14  Maurice Berk <maurice@mauriceberk.com>
 
     * DESCRIPTION: Version is now 0.4
 

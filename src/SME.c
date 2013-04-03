@@ -16,7 +16,9 @@
 #include <R.h>
 #include "NelderMead.h"
 
-#include <omp.h>
+#ifdef _OPENMP
+  #include <omp.h>
+#endif
 
 #include "SME.h"
 #include "Vector.h"
@@ -165,6 +167,7 @@ void SMEOptimizationMultiple(
 {
   int i;
 
+#ifdef _OPENMP
   if(*numberOfThreads == -1)
   {
     omp_set_dynamic(1);
@@ -174,6 +177,7 @@ void SMEOptimizationMultiple(
     omp_set_dynamic(0);
     omp_set_num_threads(*numberOfThreads);
   }
+#endif
 
   SMEParameters* allParameters = calloc(*M, sizeof(SMEParameters));
   

@@ -294,8 +294,9 @@ values but this is largely to be expected given the small number of observations
 Thus far fitting only a single gene transcript has been considered. In a typical genomics data set
 there will be tens of thousands of transcripts to be fit. In order to make this task as efficient as
 possible, the \texttt{sme} package supports OpenMP (\url{http://www.openmp.org/}) for using multiple
-threads to carry out multiple model fits in parallel. The MTB data set contains ten gene transcripts
-in total in order to illustrate this process.
+threads to carry out multiple model fits in parallel (note that this feature is platform dependent
+and in particular is unavailable on OS X). The MTB data set contains ten gene transcripts in total
+in order to illustrate this process.
 
 First, all ten transcripts can be fit one after the other as follows:
 <<serial>>=

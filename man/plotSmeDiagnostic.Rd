@@ -1,6 +1,6 @@
 % File sme/man/plotSmeDiagnostic.Rd
 % Part of the sme package for R
-% Distributed under GPL 3 or later: see sme/LICENCE
+% Distributed under GPL 3 or later
 
 \name{plotSmeDiagnostic}
 \title{Diagnostic plot of the residuals for a fitted smoothing-splines mixed-effects model}
@@ -27,7 +27,7 @@ plotSmeDiagnostic(x)
   
   Wu, H. and Zhang, J.-T. (2006). \emph{Nonparametric Regression Methods for Longitudinal Data Analysis}. Wiley
 }
-\author{Maurice Berk \email{maurice.berk01@imperial.ac.uk}}
+\author{Maurice Berk \email{maurice@mauriceberk.com}}
 \seealso{\code{\link{plot.sme}}, \code{\link{plotSmeRaw}}, \code{\link{plotSmeModel}}}
 \examples{
   data(MTB)
