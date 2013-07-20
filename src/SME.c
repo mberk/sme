@@ -11,7 +11,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-// Copyright - Maurice Berk (maurice.berk01@imperial.ac.uk) (http://www2.imperial.ac.uk/~mab201)
+// Copyright - Maurice Berk (maurice@mauriceberk.com) (http://www2.imperial.ac.uk/~mab201)
 
 #include <R.h>
 #include "NelderMead.h"
@@ -293,6 +293,7 @@ void SMEMultiple(
 {
   int i;
 
+#ifdef _OPENMP
   if(*numberOfThreads == -1)
   {
     omp_set_dynamic(1);
@@ -302,6 +303,7 @@ void SMEMultiple(
     omp_set_dynamic(0);
     omp_set_num_threads(*numberOfThreads);
   }
+#endif
 
   SMEParameters* allParameters = calloc(*M, sizeof(SMEParameters));
   

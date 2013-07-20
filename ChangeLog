@@ -1,5 +1,11 @@
 2013-04-03  Maurice Berk <maurice@mauriceberk.com>
 
+    * DESCRIPTION: Version is now 0.7
+
+    * src/SME.c: fixed a missing guard around OpenMP code
+
+2013-04-03  Maurice Berk <maurice@mauriceberk.com>
+
     * DESCRIPTION: Date is now 2013-04-03, Version is now 0.6
 
     * GPL-3, LICENCE: removed unnecessary files
