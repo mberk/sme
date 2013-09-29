@@ -1,3 +1,11 @@
+2013-07-20  Maurice Berk <maurice@mauriceberk.com>
+
+    * DESCRIPTION: Package version is now 0.8, required R version is now >= 2.15.2
+
+    * src/LapackSubset.f: removed
+
+    * src/Makevars: added $(LAPACK_LIBS) to PKG_LIBS and removed PKG_FFLAGS
+
 2013-04-03  Maurice Berk <maurice@mauriceberk.com>
 
     * DESCRIPTION: Version is now 0.7
