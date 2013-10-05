@@ -1,3 +1,14 @@
+2013-09-29  Maurice Berk <maurice@mauriceberk.com>
+
+    * DESCRIPTION: Package version is now 0.9, Date is now 2013-09-29
+
+    * R/sme.R: can now specify initial values for the smoothing parameters to be used in the NM
+    optimization
+
+    * src/SME.c: initial values for smoothing parameters in NM optimization are now taken as the
+    lambdaMu and lambadV arguments to SMEOptimization(). Fixed a bug where abs() was used rather
+    than fabs() causing all fractional smoothing parameters to be rounded
+
 2013-07-20  Maurice Berk <maurice@mauriceberk.com>
 
     * DESCRIPTION: Package version is now 0.8, required R version is now >= 2.15.2

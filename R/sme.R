@@ -15,12 +15,12 @@
 #
 # block diagonal matrix code thanks to http://tolstoy.newcastle.edu.au/R/help/04/05/1320.html
 
-sme <- function(object,tme,ind,verbose=F,lambda.mu=NULL,lambda.v=NULL,maxIter=500,knots=NULL,zeroIntercept=F,deltaEM=1e-3,deltaNM=1e-3,criteria="AICc",...)
+sme <- function(object,tme,ind,verbose=F,lambda.mu=NULL,lambda.v=NULL,maxIter=500,knots=NULL,zeroIntercept=F,deltaEM=1e-3,deltaNM=1e-3,criteria="AICc",initial.lambda.mu=10000,initial.lambda.v=10000,...)
 {
   UseMethod("sme")
 }
 
-sme.default <- function(object,tme,ind,verbose=F,lambda.mu=NULL,lambda.v=NULL,maxIter=500,knots=NULL,zeroIntercept=F,deltaEM=1e-3,deltaNM=1e-3,criteria="AICc",...)
+sme.default <- function(object,tme,ind,verbose=F,lambda.mu=NULL,lambda.v=NULL,maxIter=500,knots=NULL,zeroIntercept=F,deltaEM=1e-3,deltaNM=1e-3,criteria="AICc",initial.lambda.mu=10000,initial.lambda.v=10000,...)
 {
   y <- object
   ind <- as.factor(ind)
@@ -73,8 +73,8 @@ sme.default <- function(object,tme,ind,verbose=F,lambda.mu=NULL,lambda.v=NULL,ma
                  n=as.integer(length(yi)),
                  Ni=as.integer(sapply(yi,length)),
                  p=as.integer(ncol(X)),
-                 lambdaMu=double(1),
-                 lambdaV=double(1),
+                 lambdaMu=as.double(initial.lambda.mu),
+                 lambdaV=as.double(initial.lambda.v),
                  G=as.double(G),
                  mu=double(ncol(X)),
                  sigmaSquared=double(1),
@@ -156,18 +156,18 @@ sme.default <- function(object,tme,ind,verbose=F,lambda.mu=NULL,lambda.v=NULL,ma
   return(return.value)
 }
 
-sme.data.frame <- function(object,tme,ind,verbose=F,lambda.mu=NULL,lambda.v=NULL,maxIter=500,knots=NULL,zeroIntercept=F,deltaEM=1e-3,deltaNM=1e-3,criteria="AICc",...)
+sme.data.frame <- function(object,tme,ind,verbose=F,lambda.mu=NULL,lambda.v=NULL,maxIter=500,knots=NULL,zeroIntercept=F,deltaEM=1e-3,deltaNM=1e-3,criteria="AICc",initial.lambda.mu=10000,initial.lambda.v=10000,...)
 {
   if("variable" %in% names(object))
   {
     ys <- split(object$y,object$variable)
     tmes <- split(object$tme, object$variable)
     inds <- split(object$ind, object$variable)
-    return(sme.list(ys,tmes,inds,verbose=verbose,lambda.mu=lambda.mu,lambda.v=lambda.v,maxIter=maxIter,knots=knots,zeroIntercept=zeroIntercept,deltaEM=deltaEM,deltaNM=deltaNM,criteria=criteria,...))
+    return(sme.list(ys,tmes,inds,verbose=verbose,lambda.mu=lambda.mu,lambda.v=lambda.v,maxIter=maxIter,knots=knots,zeroIntercept=zeroIntercept,deltaEM=deltaEM,deltaNM=deltaNM,criteria=criteria,initial.lambda.mu=initial.lambda.mu,initial.lambda.v=initial.lambda.v,...))
   }
   else
   {
-    return(sme(object=object$y,tme=object$tme,ind=object$ind,,verbose=verbose,lambda.mu=lambda.mu,lambda.v=lambda.v,maxIter=maxIter,knots=knots,zeroIntercept=zeroIntercept,deltaEM=deltaEM,deltaNM=deltaNM,criteria=criteria,...))
+    return(sme(object=object$y,tme=object$tme,ind=object$ind,verbose=verbose,lambda.mu=lambda.mu,lambda.v=lambda.v,maxIter=maxIter,knots=knots,zeroIntercept=zeroIntercept,deltaEM=deltaEM,deltaNM=deltaNM,criteria=criteria,initial.lambda.mu=initial.lambda.mu,initial.lambda.v=initial.lambda.v,...))
   }
 }
 
@@ -184,6 +184,8 @@ sme.list <- function(
   deltaEM=1e-3,
   deltaNM=1e-3,
   criteria="AICc",
+  initial.lambda.mu=10000,
+  initial.lambda.v=10000,
   numberOfThreads=-1,
   ...)
 {
@@ -254,8 +256,8 @@ sme.list <- function(
                  ni=as.integer(ni),
                  Nij=as.integer(unlist(Nij)),
                  p=as.integer(ps),
-                 lambdaMu=double(M),
-                 lambdaV=double(M),
+                 lambdaMu=as.double(rep(initial.lambda.mu,M)),
+                 lambdaV=as.double(rep(initial.lambda.v,M)),
                  G=as.double(unlist(Gs)),
                  mu=double(sum(ps)),
                  sigmaSquared=double(M),

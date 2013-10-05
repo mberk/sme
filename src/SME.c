@@ -67,8 +67,8 @@ double SMEWrapper(
 {
   SMEParameters* smeParameters = (SMEParameters*) ex;
 
-  double lambdaMu = abs(par[0]);//exp(par[0]);
-  double lambdaV = abs(par[1]);//exp(par[1]);
+  double lambdaMu = fabs(par[0]);//exp(par[0]);
+  double lambdaV = fabs(par[1]);//exp(par[1]);
 
   SME(smeParameters->y,
       smeParameters->timePoints,
@@ -413,7 +413,8 @@ void SMEOptimization(
          int* verbose,
          int* info)
 {
-  double lambdas[2] = {10000.0, 10000.0};
+  //double lambdas[2] = {10000.0, 10000.0};
+  double lambdas[2] = {*lambdaMu, *lambdaV};
   double minimum;
   int numberOfParameters = 2;
   int fail = 0;
@@ -474,8 +475,8 @@ void SMEOptimization(
           &numberOfFunctionCalls,
           maxNMIterations);
 
-    *lambdaMu = abs(lambdas[0]);//exp(lambdas[0]);
-    *lambdaV = abs(lambdas[1]);//exp(lambdas[1]);
+    *lambdaMu = fabs(lambdas[0]);//exp(lambdas[0]);
+    *lambdaV = fabs(lambdas[1]);//exp(lambdas[1]);
     
     if(*verbose) Rprintf("NM chose %f,%f (%f,%f) which gave minimum %f with %03d runs of the EM aglorithm\n", lambdas[0], lambdas[1], *lambdaMu, *lambdaV, minimum, numberOfFunctionCalls);
 

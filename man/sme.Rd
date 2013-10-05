@@ -6,7 +6,8 @@
 \title{Smoothing-splines mixed-effects models}
 \usage{
 sme(object,tme,ind,verbose=F,lambda.mu=NULL,lambda.v=NULL,maxIter=500,
-knots=NULL,zeroIntercept=F,deltaEM=1e-3,deltaNM=1e-3,criteria="AICc",\dots)
+knots=NULL,zeroIntercept=F,deltaEM=1e-3,deltaNM=1e-3,criteria="AICc",initial.lambda.mu=10000,
+initial.lambda.v=10000,\dots)
 }
 \alias{sme}
 \alias{sme.default}
@@ -36,6 +37,10 @@ knots=NULL,zeroIntercept=F,deltaEM=1e-3,deltaNM=1e-3,criteria="AICc",\dots)
   \item{deltaNM}{(relative) convergence tolerance for the Nelder-Mead optimisation}
   \item{criteria}{one of \code{"AICc"}, \code{"AIC"}, \code{"BICN"} or \code{"BICn"} indicating
   which criteria to use to score a particular combination of \code{lambda.mu} and \code{lambda.v} in
+  the Nelder-Mead search}
+  \item{initial.lambda.mu}{value to initialise the smoothing parameter for the fixed-effects to in
+  the Nelder-Mead search}
+  \item{initial.lambda.v}{value to initialise the smoothing parameter for the random-effects to in
   the Nelder-Mead search}
   \item{\dots}{additional arguments to \code{sme.data.frame} or \code{sme.list}}
 }
