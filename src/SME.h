@@ -38,7 +38,6 @@ void SMEOptimization(
          double* likelihood,
          double* dfMu,
          double* dfV,
-         int* zeroIntercept,
          int* iterations,
          int* maxIterations,
          double* deltaEM,
@@ -65,7 +64,6 @@ void SME(double* y,
          double* likelihood,
          double* dfMu,
          double* dfV,
-         int* zeroIntercept,
          int* iterations,
          int* maxIterations,
          double* deltaEM,
@@ -74,7 +72,7 @@ void SME(double* y,
 
 void calculateYiPrecision(Matrix** Xi, Matrix* Dv, double* sigmaSquared, int n, Matrix** inverseVi);
 
-void EStep(Vector** yi, Matrix** Xi, Matrix** inverseVi, int N, int n, Matrix* Dv, Vector* mu, Vector** vi, Vector** epsiloni, int zeroIntercept);
+void EStep(Vector** yi, Matrix** Xi, Matrix** inverseVi, int N, int n, Matrix* Dv, Vector* mu, Vector** vi, Vector** epsiloni);
 void MStep(Vector** yi,
            Matrix* X,
            Matrix** Xi,
@@ -89,8 +87,7 @@ void MStep(Vector** yi,
            double lambdaV,
            double* sigmaSquared,
            int N,
-           int n,
-           int zeroIntercept);
+           int n);
 
 void calculateLikelihood(Vector** yi, Matrix** Xi, Matrix** inverseVi, Vector* mu, int n, double *likelihood);
 void calculateDegreesOfFreedom(Matrix* X, Matrix** Xi, Matrix** inverseVi, Matrix* G, Matrix* Dv, double lambdaMu, int n, double* dfMu, double* dfV);

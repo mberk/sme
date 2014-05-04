@@ -1,3 +1,22 @@
+2014-04-05  Maurice Berk <maurice@mauriceberk.com>
+
+    * man/sme.Rd: added details concerning the specification of initial values for the smoothing
+    parameter optimization
+
+    * man/sme.data.frame.Rd: added details concerning the specification of initial values for the
+    smoothing parameter optimization
+
+    * man/sme.list.Rd: added details concerning the specification of initial values for the
+    smoothing parameter optimization
+
+    * R/sme.R: improved formatting. The call field of sme objects should now be more meaningful in
+    cases where multiple fits were performed in one go. zeroIntercept is now properly implemented
+
+    * src/SME.c: fixed a bug with the calculation of mu in MStep() where the penalty term was not
+    correctly incorporating sigma^2. zeroIntercept is no longer used by the C code
+
+    * src/SME.h: zeroIntercept is no longer used by the C code
+
 2013-09-29  Maurice Berk <maurice@mauriceberk.com>
 
     * DESCRIPTION: Package version is now 0.9, Date is now 2013-09-29

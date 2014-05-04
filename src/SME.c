@@ -51,7 +51,6 @@ typedef struct
   double* likelihood;
   double* dfMu;
   double* dfV;
-  int* zeroIntercept;
   int* iterations;
   int* maxIterations;
   double* deltaEM;
@@ -88,7 +87,6 @@ double SMEWrapper(
       smeParameters->likelihood,
       smeParameters->dfMu,
       smeParameters->dfV,
-      smeParameters->zeroIntercept,
       smeParameters->iterations,
       smeParameters->maxIterations,
       smeParameters->deltaEM,
@@ -155,7 +153,6 @@ void SMEOptimizationMultiple(
   double* likelihood, //Output - M likelihoods
   double* dfMu, //Output - M degrees of freedom for mu
   double* dfV,  //Output - M degrees of freedom for V
-  int* zeroIntercept, //M control parameters indicating if variable should be fit with zero intercept
   int* iterations,  //Output - number of iterations it took for final EM fit per variable
   int* maxIterations, //1 control parameters indicating maximum iterations for EM per variable
   double* deltaEM, //1 control parameters indicating convergence criteria for EM
@@ -208,7 +205,6 @@ void SMEOptimizationMultiple(
     allParameters[i].likelihood = &likelihood[i];
     allParameters[i].dfMu = &dfMu[i];
     allParameters[i].dfV = &dfV[i];
-    allParameters[i].zeroIntercept = &zeroIntercept[i];
     allParameters[i].iterations = &iterations[i];
     allParameters[i].maxIterations = maxIterations;
     allParameters[i].deltaEM = deltaEM;
@@ -249,7 +245,6 @@ void SMEOptimizationMultiple(
          allParameters[i].likelihood,
          allParameters[i].dfMu,
          allParameters[i].dfV,
-         allParameters[i].zeroIntercept,
          allParameters[i].iterations,
          allParameters[i].maxIterations,
          deltaEM,
@@ -282,7 +277,6 @@ void SMEMultiple(
   double* likelihood, //Output - M likelihoods
   double* dfMu, //Output - M degrees of freedom for mu
   double* dfV,  //Output - M degrees of freedom for V
-  int* zeroIntercept, //M control parameters indicating if variable should be fit with zero intercept
   int* iterations,  //Output - number of iterations it took for final EM fit per variable
   int* maxIterations, //1 control parameters indicating maximum iterations for EM per variable
   double* deltaEM, //1 control parameters indicating convergence criteria for EM
@@ -334,7 +328,6 @@ void SMEMultiple(
     allParameters[i].likelihood = &likelihood[i];
     allParameters[i].dfMu = &dfMu[i];
     allParameters[i].dfV = &dfV[i];
-    allParameters[i].zeroIntercept = &zeroIntercept[i];
     allParameters[i].iterations = &iterations[i];
     allParameters[i].maxIterations = maxIterations;
     allParameters[i].deltaEM = deltaEM;
@@ -373,7 +366,6 @@ void SMEMultiple(
         allParameters[i].likelihood,
         allParameters[i].dfMu,
         allParameters[i].dfV,
-        allParameters[i].zeroIntercept,
         allParameters[i].iterations,
         allParameters[i].maxIterations,
         allParameters[i].deltaEM,
@@ -404,7 +396,6 @@ void SMEOptimization(
          double* likelihood,
          double* dfMu,
          double* dfV,
-         int* zeroIntercept,
          int* iterations,
          int* maxIterations,
          double* deltaEM,
@@ -449,7 +440,6 @@ void SMEOptimization(
   smeParameters.likelihood = likelihood;
   smeParameters.dfMu = dfMu;
   smeParameters.dfV = dfV;
-  smeParameters.zeroIntercept = zeroIntercept;
   smeParameters.iterations = iterations;
   smeParameters.maxIterations = maxIterations;
   smeParameters.deltaEM = deltaEM;
@@ -499,7 +489,6 @@ void SMEOptimization(
         likelihood,
         dfMu,
         dfV,
-        zeroIntercept,
         iterations,
         maxIterations,
         deltaEM,
@@ -542,7 +531,6 @@ void SME(double* y,
          double* likelihood,
          double* dfMu,
          double* dfV,
-         int* zeroIntercept,
          int* iterations,
          int* maxIterations,
          double* deltaEM,
@@ -665,15 +653,11 @@ void SME(double* y,
 
   penalisedLeastSquaresUsingFactorization(&XAsMatrix, &yAsVector, &muAsVector, &muPenaltyFactorization);
 
-  if(*zeroIntercept)
-  {
-    muAsVector.pointer[0] = 0.0;
-  }
   calculateLikelihood(yi, Xi, inverseVi, &muAsVector, *n, likelihood);
   
   for(*iterations = 0; *iterations < *maxIterations && (*likelihood - oldLikelihood) > *deltaEM; (*iterations)++)
   {
-    EStep(yi, Xi, inverseVi, *N, *n, &Dv, &muAsVector, vi, epsiloni, *zeroIntercept);
+    EStep(yi, Xi, inverseVi, *N, *n, &Dv, &muAsVector, vi, epsiloni);
     MStep(yi,
           &XAsMatrix,
           Xi,
@@ -688,15 +672,14 @@ void SME(double* y,
           *lambdaV,
           sigmaSquared,
           *N,
-          *n,
-          *zeroIntercept);
+          *n);
 
     oldLikelihood = *likelihood;
     calculateLikelihood(yi, Xi, inverseVi, &muAsVector, *n, likelihood);
   }
 
   calculateDegreesOfFreedom(&XAsMatrix, Xi, inverseVi, &GAsMatrix, &Dv, *lambdaMu, *n, dfMu, dfV);
-  EStep(yi, Xi, inverseVi, *N, *n, &Dv, &muAsVector, vi, epsiloni, *zeroIntercept);
+  EStep(yi, Xi, inverseVi, *N, *n, &Dv, &muAsVector, vi, epsiloni);
 
   if((*likelihood - oldLikelihood) < 0)
   {
@@ -729,7 +712,7 @@ void SME(double* y,
   free(yi);
 }
 
-void EStep(Vector** yi, Matrix** Xi, Matrix** inverseVi, int N, int n, Matrix* Dv, Vector* mu, Vector** vi, Vector** epsiloni, int zeroIntercept)
+void EStep(Vector** yi, Matrix** Xi, Matrix** inverseVi, int N, int n, Matrix* Dv, Vector* mu, Vector** vi, Vector** epsiloni)
 {
   Vector yiCentered;
   Vector inverseViYiCentered;
@@ -761,10 +744,6 @@ void EStep(Vector** yi, Matrix** Xi, Matrix** inverseVi, int N, int n, Matrix* D
     matrixVectorMultiply(Dv, vi[i], 0, vi[i], 1.0, 0.0, 0);
 
     matrixVectorMultiply(Xi[i], vi[i], &yiCentered, epsiloni[i], -1.0, 1.0, 0);
-    if(zeroIntercept)
-    {
-      vi[i]->pointer[0] = 0.0;
-    }
 
     //free(inverseViYiCentered.pointer);
     //free(yiCentered.pointer);
@@ -790,12 +769,12 @@ void MStep(Vector** yi,
            double lambdaV,
            double* sigmaSquared,
            int N,
-           int n,
-           int zeroIntercept)
+           int n)
 {
   Matrix U, A, conditionalCovariance, Dinverse; // A <- Dv %*% t(X) %*% t(chol(solve(Vi[[1]])))
   Vector yCentered, yiCentered; // y - Z %*% v
   int i, j;
+  double sigma;
   
   A.rows = D->rows;
 
@@ -881,13 +860,23 @@ void MStep(Vector** yi,
 
   *sigmaSquared = (1.0) / N * (sumOfSquares + *sigmaSquared * N - *sigmaSquared * *sigmaSquared * trace);
 
-  penalisedLeastSquaresUsingFactorization(X, &yCentered, mu, muPenaltyFactorization);
-
-
-  if(zeroIntercept)
+  sigma = sqrt(*sigmaSquared);
+  for(i = 0; i < muPenaltyFactorization->rows; i++)
   {
-    mu->pointer[0] = 0.0;
+    for(j = 0; j < muPenaltyFactorization->columns; j++)
+    {
+      muPenaltyFactorization->pointer[i + j * muPenaltyFactorization->rows] *= sigma;
+    }
   }
+  penalisedLeastSquaresUsingFactorization(X, &yCentered, mu, muPenaltyFactorization);
+  for(i = 0; i < muPenaltyFactorization->rows; i++)
+  {
+    for(j = 0; j < muPenaltyFactorization->columns; j++)
+    {
+      muPenaltyFactorization->pointer[i + j * muPenaltyFactorization->rows] /= sigma;
+    }
+  }
+
   calculateYiPrecision(Xi, Dv, sigmaSquared, n, inverseVi);
 
   free(Dinverse.pointer);
