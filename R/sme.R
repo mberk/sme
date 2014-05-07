@@ -231,6 +231,7 @@ sme.default <- function(
   return.value$iterations <- res.em$iterations
   return.value$info <- res.em$info
   return.value$zeroIntercept <- zeroIntercept
+  return.value$normalizeTime <- return.value$normalizeTime
   if(zeroIntercept)
   {
     return.value$intercept <- intercept
@@ -512,7 +513,8 @@ sme.list <- function(
         parameters=list(sigmaSquared=sigma,D=matrix(D,nrow=p)),
         iterations=iterations,
         info=info,
-        zeroIntercept=zeroIntercept)
+        zeroIntercept=zeroIntercept,
+        normalizeTime=normalizeTime)
       if(!is.null(knots)) return.value$knots <- knots
       if(zeroIntercept){ return.value$intercept <- intercept }
       class(return.value) <- "sme"
@@ -527,11 +529,49 @@ getRoughnessMatrix <- function(object)
 {
   require(splines)
 
+  if(is.null(object$zeroIntercept))
+  {
+    object$zeroIntercept <- FALSE
+  }
+  if(is.null(object$normalizeTime))
+  {
+    object$normalizeTime <- FALSE
+  }
+
+  if(object$normalizeTime)
+  {
+    if(object$zeroIntercept)
+    {
+      min.tme <- object$intercept
+    }
+    else
+    {
+      min.tme <- min(object$tme)
+    }
+  
+    if(!is.null(object$knots))
+    {
+      knots <- (knots - min.tme) / max(min.tme)
+    }
+    object$data$tme <- (object$data$tme - min.tme) / max(object$data$tme)
+  }
+
   if(is.null(object$knots))
   {
     X <- incidenceMatrix(object$data$tme)
     Xi <- split.data.frame(X,object$data$ind)
-    G <- roughnessMatrix(X)
+
+    if(object$zeroIntercept)
+    {
+      attr(X,"tau") <- c(if(object$normalizeTime){ 0 }else{ object$intercept },attr(X,"tau"))
+      attr(X,"M") <- attr(X,"M")+1
+      G <- roughnessMatrix(X)
+      G <- G[-1,-1]
+    }
+    else
+    {
+      G <- roughnessMatrix(X)
+    }
   }
   else
   {
@@ -638,6 +678,8 @@ plotSmeModel <- function(x,xlab="Time",ylab="Y",showIndividuals=T,showConfidence
   }
   if(x$zeroIntercept)
   {
+    x.orig <- x
+  
     x$coefficients <- cbind(Intercept=x$intercept,x$coefficients)
     colnames(x$coefficients)[1] <- as.character(x$intercept)
     
@@ -651,7 +693,15 @@ plotSmeModel <- function(x,xlab="Time",ylab="Y",showIndividuals=T,showConfidence
 
   if(showConfidenceBands)
   {
-    mu.variance <- diag(vcov(x))
+    if(x$zeroIntercept)
+    {
+      mu.variance <- c(0,diag(vcov(x.orig)))
+    }
+    else
+    {
+      mu.variance <- diag(vcov(x))
+    }
+
     upper.band <- spline(x=as.numeric(colnames(x$coefficients)),y=x$coefficients[1,] + 1.96 * sqrt(mu.variance),method="natural",n=500)
     lower.band <- spline(x=as.numeric(colnames(x$coefficients)),y=x$coefficients[1,] - 1.96 * sqrt(mu.variance),method="natural",n=500)
     ylim <- range(ylim, upper.band$y, lower.band$y)

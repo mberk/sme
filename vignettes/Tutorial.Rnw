@@ -7,7 +7,7 @@
 \title{Smoothing-splines Mixed-effects Models in R using the \texttt{sme} Package: a Tutorial}
 \author{Maurice Berk\\
   Imperial College London\\
-  maurice.berk01@imperial.ac.uk}
+  maurice@mauriceberk.com}
 \begin{document}
 \SweaveOpts{engine=R,eps=FALSE,pdf=TRUE,strip.white=true,keep.source=TRUE}
 \SweaveOpts{include=FALSE}

@@ -1,5 +1,14 @@
 2014-04-05  Maurice Berk <maurice@mauriceberk.com>
 
+    * R/sme.R: sme.default and sme.list now store the normalizeTime argument in the sme object.
+    getRoughnessMatrix() now properly takes into account scenarios where zeroIntercept and/or
+    normalizeTime were used when fitting the model. plotSmeModel should now properly handle
+    calculating drawing confidence bands when zeroIntercept was used when fitting the model
+
+    * vignettes/Tutorial.Rnw: updated author's email address
+
+2014-04-05  Maurice Berk <maurice@mauriceberk.com>
+
     * man/sme.Rd: added details concerning the specification of initial values for the smoothing
     parameter optimization
 
