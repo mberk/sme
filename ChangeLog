@@ -1,3 +1,9 @@
+2014-06-02  Maurice Berk <maurice@mauriceberk.com>
+
+    * man/plotSmeRaw.Rd: updated documentation to reflect the change to plotSmeRaw() below
+
+    * R/sme.R: plotSmeRaw() can now take additional arguments which are passed through to xyplot()
+
 2014-04-05  Maurice Berk <maurice@mauriceberk.com>
 
     * R/sme.R: sme.default and sme.list now store the normalizeTime argument in the sme object.

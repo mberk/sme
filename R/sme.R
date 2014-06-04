@@ -721,7 +721,7 @@ plotSmeModel <- function(x,xlab="Time",ylab="Y",showIndividuals=T,showConfidence
   }
 }
 
-plotSmeRaw <- function(x,xlab="Time",ylab="Y",mainTitle="",showModelFits=TRUE,showRawLines=FALSE)
+plotSmeRaw <- function(x,xlab="Time",ylab="Y",mainTitle="",showModelFits=TRUE,showRawLines=FALSE,...)
 {
   require(lattice)
 
@@ -759,7 +759,8 @@ plotSmeRaw <- function(x,xlab="Time",ylab="Y",mainTitle="",showModelFits=TRUE,sh
               f <- spline(x=as.numeric(colnames(coef(x))),y=coef(x)[1,] + coef(x)[paste("v",ind,sep=""),],method="natural",n=100)
               panel.lines(x=f$x,y=f$y,lty="dashed")
             }
-          })
+          },
+         ...)
 }
 
 plotSmeDiagnostic <- function(x)

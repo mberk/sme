@@ -5,7 +5,7 @@
 \name{plotSmeRaw}
 \title{Visualisation of raw data for a smoothing-splines mixed-effects model}
 \usage{
-plotSmeRaw(x,xlab="Time",ylab="Y",mainTitle="",showModelFits=TRUE,showRawLines=FALSE)
+plotSmeRaw(x,xlab="Time",ylab="Y",mainTitle="",showModelFits=TRUE,showRawLines=FALSE,...)
 }
 \alias{plotSmeRaw}
 \arguments{
@@ -17,6 +17,7 @@ plotSmeRaw(x,xlab="Time",ylab="Y",mainTitle="",showModelFits=TRUE,showRawLines=F
   \item{showModelFits}{if \code{TRUE}, the fitted individual curve for each subject will be overlaid
   on   their observations in their panel}
   \item{showRawLines}{if \code{TRUE}, the raw observations will be connected by lines}
+  \item{\dots}{additional arguments passed through to \code{xyplot}}
 }
 \description{
   A visualisation of the raw data used to fit the smoothing-splines mixed-effects model is obtained.
