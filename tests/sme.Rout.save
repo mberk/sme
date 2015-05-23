@@ -1,8 +1,8 @@
 
-R version 2.15.0 (2012-03-30)
+R version 2.15.2 (2012-10-26) -- "Trick or Treat"
 Copyright (C) 2012 The R Foundation for Statistical Computing
 ISBN 3-900051-07-0
-Platform: i386-pc-mingw32/i386 (32-bit)
+Platform: x86_64-w64-mingw32/x64 (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
 You are welcome to redistribute it under certain conditions.
@@ -19,49 +19,51 @@ Type 'q()' to quit R.
 > library(sme)
 Loading required package: splines
 Loading required package: lattice
+Warning message:
+package 'lattice' was built under R version 2.15.3 
 > data(MTB)
 > fits <- sme(MTB)
 > sapply(fits,logLik)
-        1         2         3         4         5         6         7         8 
-15.984619 19.971258 17.841536  5.520355  6.815882 27.626728 15.715070 15.152892 
-        9        10 
-26.591557 17.141553 
+         1          2          3          4          5          6          7 
+ 15.180176 176.122085  17.778923   6.617242   6.932365 185.501040 181.405027 
+         8          9         10 
+ 15.376392 184.649362 175.169305 
 > 
 > fits <- sme(MTB,numerOfThreads=10)
 > sapply(fits,logLik)
-        1         2         3         4         5         6         7         8 
-15.984619 19.971258 17.841536  5.520355  6.815882 27.626728 15.715070 15.152892 
-        9        10 
-26.591557 17.141553 
+         1          2          3          4          5          6          7 
+ 15.180176 176.122085  17.778923   6.617242   6.932365 185.501040 181.405027 
+         8          9         10 
+ 15.376392 184.649362 175.169305 
 > 
 > fit <- sme(MTB[MTB$variable==6031,c("y","tme","ind")])
 > logLik(fit)
-[1] 17.84154
+[1] 17.77892
 attr(,"df")
-[1] 8.942939
+[1] 8.895813
 attr(,"nobs")
 [1] 29
 > 
 > data(inflammatory)
 > fit <- sme(inflammatory,deltaNM=0.1,deltaEM=0.1)
 > logLik(fit)
-[1] 161.9172
+[1] 168.4761
 attr(,"df")
-[1] 68.25369
+[1] 71.67255
 attr(,"nobs")
 [1] 318
 > 
 > fit <- sme(inflammatory,knots=c(29.5,57,84.5),deltaEM=0.1,deltaNM=0.1)
 > AIC(fit)
-[1] -55.60315
+[1] -55.5538
 > AICc(fit)
-[1] 198.036
+[1] 199.2688
 > BIC(fit)
-[1] 495.6624
+[1] 496.6116
 > BICn(fit)
-[1] 404.755
+[1] 405.5558
 attr(,"df")
-[1] 146.5332
+[1] 146.7724
 attr(,"nobs")
 [1] 318
 > 

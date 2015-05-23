@@ -1,3 +1,13 @@
+2015-05-23  Maurice Berk <maurice@mauriceberk.com>
+
+    * DESCRIPTION: Package version is now 1.0, Date is now 2015-05-23
+
+    *  R/sme.R: empty levels in ind are dropped
+
+2014-12-16  Maurice Berk <maurice@mauriceberk.com>
+
+    * tests/sme.Rout.save: updated test output to reflect code changes
+
 2014-06-02  Maurice Berk <maurice@mauriceberk.com>
 
     * man/plotSmeRaw.Rd: updated documentation to reflect the change to plotSmeRaw() below

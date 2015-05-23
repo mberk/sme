@@ -55,6 +55,7 @@ sme.default <- function(
 {
   y <- object
   ind <- as.factor(ind)
+  ind <- droplevels(ind)
   ind.unique <- sort(unique(ind))
   y <- y[order(ind)]
   tme <- tme[order(ind)]
@@ -294,6 +295,7 @@ sme.list <- function(
   for(i in 1:length(ys))
   {
     inds[[i]] <- as.factor(inds[[i]])
+    inds[[i]] <- droplevels(inds[[i]])
     ys[[i]] <- ys[[i]][order(inds[[i]])]
     tmes[[i]] <- tmes[[i]][order(inds[[i]])]
     inds[[i]] <- inds[[i]][order(inds[[i]])]
