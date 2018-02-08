@@ -148,7 +148,7 @@ void NelderMead(int n, double *Bvec, double *X, double *Fmin, optimfn fminfn,
             //temp += P[i][j];
             temp += vertices[j].pointer[i];
             //P[i][C - 1] = temp / n;
-            vertices[C - 1].pointer[i] = temp / n;
+          vertices[C - 1].pointer[i] = temp / n;
         }
         for (i = 0; i < n; i++)
           //Bvec[i] = (1.0 + alpha) * P[i][C - 1] - alpha * P[i][H - 1];
