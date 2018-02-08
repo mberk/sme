@@ -6,8 +6,8 @@
 \title{Smoothing-splines mixed-effects models}
 \usage{
 sme(object,tme,ind,verbose=F,lambda.mu=NULL,lambda.v=NULL,maxIter=500,
-knots=NULL,zeroIntercept=F,deltaEM=1e-3,deltaNM=1e-3,criteria="AICc",initial.lambda.mu=10000,
-initial.lambda.v=10000,normalizeTime=FALSE,\dots)
+knots=NULL,zeroIntercept=F,deltaEM=1e-3,deltaNM=1e-3,criteria="AICc",
+initial.lambda.mu=10000,initial.lambda.v=10000,normalizeTime=FALSE,\dots)
 }
 \alias{sme}
 \alias{sme.default}

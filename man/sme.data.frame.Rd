@@ -5,8 +5,8 @@
 \title{Smoothing-splines mixed-effects model fit(s) from a data.frame object}
 \usage{
 \method{sme}{data.frame}(object,tme,ind,verbose=F,lambda.mu=NULL,lambda.v=NULL,maxIter=500,
-knots=NULL,zeroIntercept=F,deltaEM=1e-3,deltaNM=1e-3,criteria="AICc",initial.lambda.mu=10000,
-initial.lambda.v=10000,normalizeTime=FALSE,\dots)
+knots=NULL,zeroIntercept=F,deltaEM=1e-3,deltaNM=1e-3,criteria="AICc",
+initial.lambda.mu=10000,initial.lambda.v=10000,normalizeTime=FALSE,\dots)
 }
 \alias{sme.data.frame}
 \arguments{
