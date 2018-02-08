@@ -18,7 +18,7 @@ void NelderMead(int n, double *Bvec, double *X, double *Fmin, optimfn fminfn,
     int n1=0;
     double oldsize;
     double size, step, temp, trystep;
-    char tstr[6];
+    char tstr[12];
     double VH, VL, VR;
 
     if (maxit <= 0)
@@ -137,8 +137,11 @@ void NelderMead(int n, double *Bvec, double *X, double *Fmin, optimfn fminfn,
 
         if (VH <= VL + convtol || VL <= abstol) break;
 
-        sprintf(tstr, "%5d", funcount);
-        if (trace) Rprintf("%s%s %f %f\n", action, tstr, VH, VL);
+        if (trace)
+        {
+          snprintf(tstr, 12, "%5d", funcount);
+          Rprintf("%s%s %f %f\n", action, tstr, VH, VL);
+        }
 
         for (i = 0; i < n; i++)
         {
