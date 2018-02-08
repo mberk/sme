@@ -1,5 +1,9 @@
 useDynLib(sme)
 import(stats)
+importFrom(grDevices, col2rgb, rgb)
+importFrom(graphics, layout, lines, plot, polygon)
+importFrom(lattice, panel.lines, panel.xyplot, xyplot)
+importFrom(splines, ns)
 
 export(AICc, BICn, sme, sme.default, sme.list, sme.data.frame, plot.sme, plotSmeModel,
 plotSmeRaw, plotSmeDiagnostic, getRoughnessMatrix)

@@ -72,8 +72,6 @@ sme.default <- function(
 
   if(!is.null(knots))
   {
-    require(splines)
-
     if(normalizeTime)
     {
       knots.orig <- knots
@@ -312,8 +310,6 @@ sme.list <- function(
   
   if(!is.null(knots))
   {
-    require(splines)
-
     if(normalizeTime)
     {
       allKnots <- lapply(tmes.orig,function(tme) c(0,(knots - min(tme)) / max(tme),1))
@@ -529,8 +525,6 @@ sme.list <- function(
 
 getRoughnessMatrix <- function(object)
 {
-  require(splines)
-
   if(is.null(object$zeroIntercept))
   {
     object$zeroIntercept <- FALSE
@@ -592,8 +586,6 @@ getRoughnessMatrix <- function(object)
 
 vcov.sme <- function(object,...)
 {
-  require(splines)
-
   if(is.null(object$knots))
   {
     X <- incidenceMatrix(object$data$tme)
@@ -725,8 +717,6 @@ plotSmeModel <- function(x,xlab="Time",ylab="Y",showIndividuals=T,showConfidence
 
 plotSmeRaw <- function(x,xlab="Time",ylab="Y",mainTitle="",showModelFits=TRUE,showRawLines=FALSE,...)
 {
-  require(lattice)
-
   n <- nrow(coef(x))-1
 
   if(is.null(x$zeroIntercept))
