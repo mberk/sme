@@ -1,10 +1,11 @@
 Package: sme
-Version: 1.0
-Date: 2015-05-23
-Title: Smoothing-splines Mixed-effects Models
+Version: 1.0.1
+Date: 2018-02-08
+Title: Smoothing-Splines Mixed-Effects Models
 Authors@R: c(person("Maurice", "Berk", email="maurice@mauriceberk.com",role=c("aut","cre")))
 Depends: R (>= 2.15.2), splines, lattice, stats
 Description: A package for fitting smoothing-splines mixed-effects models to replicated functional
   data sets.
 License: GPL (>=3)
-URL: http://www2.imperial.ac.uk/~mab201
+URL: https://github.com/mberk/sme
+BugReports: https://github.com/mberk/sme/issues
