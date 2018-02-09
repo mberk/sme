@@ -1,6 +1,6 @@
 Package: sme
-Version: 1.0.1
-Date: 2018-02-08
+Version: 1.0.2
+Date: 2018-02-09
 Title: Smoothing-Splines Mixed-Effects Models
 Authors@R: c(person("Maurice", "Berk", email="maurice@mauriceberk.com",role=c("aut","cre")))
 Depends: R (>= 2.15.2), splines, lattice, stats
