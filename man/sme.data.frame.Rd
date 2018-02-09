@@ -78,10 +78,10 @@ distinct time points.
 \author{Maurice Berk \email{maurice@mauriceberk.com}}
 \seealso{\code{\link{smeObject}}, \code{\link{sme}}, \code{\link{sme.list}}, \code{\link{plot.sme}}}
 \examples{
-  data(MTB)
-  system.time(fits <- sme(MTB,numberOfThreads=1))
-  sapply(fits,logLik)
+  \dontrun{data(MTB)}
+  \dontrun{system.time(fits <- sme(MTB,numberOfThreads=1))}
+  \dontrun{sapply(fits,logLik)}
 
-  system.time(fits <- sme(MTB,numberOfThreads=10))
-  sapply(fits,logLik)
+  \dontrun{system.time(fits <- sme(MTB,numberOfThreads=10))}
+  \dontrun{sapply(fits,logLik)}
 }
